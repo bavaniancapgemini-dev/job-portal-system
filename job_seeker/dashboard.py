@@ -1,3 +1,6 @@
+from job_seeker.application import apply_for_job
+
+
 def job_seeker_dashboard(user):
     while True:
         print("\n===================================")
@@ -18,7 +21,7 @@ def job_seeker_dashboard(user):
             search_jobs()
 
         elif choice == "3":
-            print("\nJob application feature coming soon.")
+            apply_for_job(user)
 
         elif choice == "4":
             print("\nLogged out successfully.")

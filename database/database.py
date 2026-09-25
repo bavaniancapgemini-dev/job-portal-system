@@ -41,6 +41,17 @@ def create_database():
 
         )
     """)
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS applications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            job_id INTEGER NOT NULL,
+            job_seeker_id INTEGER NOT NULL,
+            status TEXT NOT NULL DEFAULT 'Applied',
+            FOREIGN KEY (job_id) REFERENCES jobs(id),
+            FOREIGN KEY (job_seeker_id) REFERENCES job_seekers(id)
+        )
+    """)
 
     connection.commit()
     connection.close()
