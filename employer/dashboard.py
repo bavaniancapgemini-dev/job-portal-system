@@ -9,7 +9,8 @@ def employer_dashboard(employer):
         print("2. Post Job")
         print("3. View Posted Jobs")
         print("4. View Applicants")
-        print("5. Logout")
+        print("5. Update Application Status")
+        print("6. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
@@ -27,6 +28,9 @@ def employer_dashboard(employer):
             view_applicants(employer)
 
         elif choice == "5":
+            update_application_status(employer)
+
+        elif choice == "6":
             print("\nLogged out successfully.")
             break
 
@@ -122,3 +126,85 @@ def view_applicants(employer):
         print("Skills         :", applicant[4])
         print("Status         :", applicant[5])
         print("-----------------------------------")
+        
+def update_application_status(employer):
+    import sqlite3
+
+    print("\n===================================")
+    print("      UPDATE APPLICATION STATUS")
+    print("===================================")
+
+    application_id = input("Enter Application ID: ")
+
+    connection = sqlite3.connect("job_portal.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT
+            applications.id,
+            jobs.title,
+            job_seekers.name,
+            applications.status
+        FROM applications
+        JOIN jobs
+            ON applications.job_id = jobs.id
+        JOIN job_seekers
+            ON applications.job_seeker_id = job_seekers.id
+        WHERE applications.id = ?
+          AND jobs.employer_id = ?
+    """, (application_id, employer[0]))
+
+    application = cursor.fetchone()
+
+    if not application:
+        print("\nApplication not found.")
+        connection.close()
+        return
+
+    print("\nApplication Details")
+    print("-----------------------------------")
+    print("Application ID :", application[0])
+    print("Job Title      :", application[1])
+    print("Applicant      :", application[2])
+    print("Current Status :", application[3])
+    print("-----------------------------------")
+
+    print("\nSelect New Status")
+    print("1. Applied")
+    print("2. Shortlisted")
+    print("3. Rejected")
+    print("4. Selected")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        new_status = "Applied"
+
+    elif choice == "2":
+        new_status = "Shortlisted"
+
+    elif choice == "3":
+        new_status = "Rejected"
+
+    elif choice == "4":
+        new_status = "Selected"
+
+    else:
+        print("\nInvalid choice.")
+        connection.close()
+        return
+
+    cursor.execute("""
+        UPDATE applications
+        SET status = ?
+        WHERE id = ?
+    """, (new_status, application_id))
+
+    connection.commit()
+    connection.close()
+
+    print("\nApplication status updated successfully!")
+    print("-----------------------------------")
+    print("Application ID :", application_id)
+    print("New Status     :", new_status)
+    print("-----------------------------------")

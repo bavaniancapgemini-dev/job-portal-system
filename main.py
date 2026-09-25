@@ -41,5 +41,4 @@ def main_menu():
         else:
             print("\nInvalid choice. Please try again.")
 
-
 main_menu()
