@@ -7,27 +7,31 @@ def job_seeker_dashboard(user):
         print("       JOB SEEKER DASHBOARD")
         print("===================================")
         print("1. View Profile")
-        print("2. Search Jobs")
-        print("3. Apply for Job")
-        print("4. My Applications")
-        print("5. Logout")
+        print("2. Update Profile")
+        print("3. Search Jobs")
+        print("4. Apply for Job")
+        print("5. My Applications")
+        print("6. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
 
         if choice == "1":
             view_profile(user)
-
+        
         elif choice == "2":
-            search_jobs()
+            update_profile(user)
 
         elif choice == "3":
-            apply_for_job(user)
+            search_jobs()
 
         elif choice == "4":
-            view_my_applications(user)
+            apply_for_job(user)
 
         elif choice == "5":
+            view_my_applications(user)
+
+        elif choice == "6":
             print("\nLogged out successfully.")
             break
 
@@ -127,3 +131,43 @@ def view_my_applications(user):
         print("Location       :", application[3])
         print("Status         :", application[4])
         print("-----------------------------------")
+        
+def update_profile(user):
+    import sqlite3
+
+    print("\n===================================")
+    print("          UPDATE PROFILE")
+    print("===================================")
+
+    print("Current Name   :", user[1])
+    print("Current Skills :", user[3])
+
+    print("\nEnter new details.")
+    print("Press Enter to keep the current value.")
+
+    new_name = input("New name: ")
+    new_skills = input("New skills: ")
+
+    if new_name == "":
+        new_name = user[1]
+
+    if new_skills == "":
+        new_skills = user[3]
+
+    connection = sqlite3.connect("job_portal.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        UPDATE job_seekers
+        SET name = ?, skills = ?
+        WHERE id = ?
+    """, (new_name, new_skills, user[0]))
+
+    connection.commit()
+    connection.close()
+
+    print("\nProfile updated successfully!")
+    print("-----------------------------------")
+    print("Name   :", new_name)
+    print("Skills :", new_skills)
+    print("-----------------------------------")
