@@ -1,4 +1,5 @@
 import sqlite3
+from job_seeker.dashboard import job_seeker_dashboard
 
 
 def login_job_seeker():
@@ -24,11 +25,9 @@ def login_job_seeker():
 
     if user:
         print("\nLogin Successful!")
-        print("-----------------------------------")
         print("Welcome,", user[1])
-        print("Email:", user[2])
-        print("Skills:", user[3])
-        print("-----------------------------------")
+
+        job_seeker_dashboard(user)
 
         return user
 
