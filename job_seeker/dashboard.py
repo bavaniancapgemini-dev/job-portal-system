@@ -53,22 +53,29 @@ def search_jobs():
     import sqlite3
 
     print("\n===================================")
-    print("            SEARCH JOBS")
+    print("          SEARCH JOBS")
     print("===================================")
 
-    keyword = input("Enter job title or skill to search: ")
+    keyword = input("Enter job title or skill: ")
+    location = input("Enter location: ")
+    job_type = input("Enter job type: ")
 
     connection = sqlite3.connect("job_portal.db")
     cursor = connection.cursor()
 
-    cursor.execute("""
-        SELECT id, title, company_name, location, salary, job_type, skills
+    query = """
+        SELECT id, title, company_name, location,
+               salary, job_type, skills
         FROM jobs
         WHERE title LIKE ?
-           OR skills LIKE ?
-    """, (
+          AND location LIKE ?
+          AND job_type LIKE ?
+    """
+
+    cursor.execute(query, (
         "%" + keyword + "%",
-        "%" + keyword + "%"
+        "%" + location + "%",
+        "%" + job_type + "%"
     ))
 
     jobs = cursor.fetchall()
@@ -76,7 +83,7 @@ def search_jobs():
     connection.close()
 
     if not jobs:
-        print("\nNo jobs found.")
+        print("\nNo jobs found matching your search.")
         return
 
     print("\nJobs Found:")
@@ -91,7 +98,7 @@ def search_jobs():
         print("Job Type  :", job[5])
         print("Skills    :", job[6])
         print("-----------------------------------")
-        
+    
 def view_my_applications(user):
     import sqlite3
 
