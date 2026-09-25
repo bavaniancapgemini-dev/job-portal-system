@@ -6,31 +6,35 @@ def employer_dashboard(employer):
         print("        EMPLOYER DASHBOARD")
         print("===================================")
         print("1. View Company Profile")
-        print("2. Post Job")
-        print("3. View Posted Jobs")
-        print("4. View Applicants")
-        print("5. Update Application Status")
-        print("6. Logout")
+        print("2. Update Company Profile")
+        print("3. Post Job")
+        print("4. View Posted Jobs")
+        print("5. View Applicants")
+        print("6. Update Application Status")
+        print("7. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
 
         if choice == "1":
             view_company_profile(employer)
-
+            
         elif choice == "2":
-            post_job(employer)
+            update_company_profile(employer)
 
         elif choice == "3":
-            view_posted_jobs(employer)
+            post_job(employer)
 
         elif choice == "4":
-            view_applicants(employer)
+            view_posted_jobs(employer)
 
         elif choice == "5":
-            update_application_status(employer)
+            view_applicants(employer)
 
         elif choice == "6":
+            update_application_status(employer)
+
+        elif choice == "7":
             print("\nLogged out successfully.")
             break
 
@@ -207,4 +211,53 @@ def update_application_status(employer):
     print("-----------------------------------")
     print("Application ID :", application_id)
     print("New Status     :", new_status)
+    print("-----------------------------------")
+    
+def update_company_profile(employer):
+    import sqlite3
+
+    print("\n===================================")
+    print("       UPDATE COMPANY PROFILE")
+    print("===================================")
+
+    print("Current Company  :", employer[1])
+    print("Current Industry :", employer[3])
+
+    print("\nEnter new details.")
+    print("Press Enter to keep the current value.")
+
+    new_company_name = input("New company name: ")
+    new_industry = input("New industry: ")
+
+    if new_company_name == "":
+        new_company_name = employer[1]
+
+    if new_industry == "":
+        new_industry = employer[3]
+
+    connection = sqlite3.connect("job_portal.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        UPDATE employers
+        SET company_name = ?, industry = ?
+        WHERE id = ?
+    """, (new_company_name, new_industry, employer[0]))
+
+    connection.commit()
+
+    # Keep job records synchronized with the new company name
+    cursor.execute("""
+        UPDATE jobs
+        SET company_name = ?
+        WHERE employer_id = ?
+    """, (new_company_name, employer[0]))
+
+    connection.commit()
+    connection.close()
+
+    print("\nCompany profile updated successfully!")
+    print("-----------------------------------")
+    print("Company  :", new_company_name)
+    print("Industry :", new_industry)
     print("-----------------------------------")
