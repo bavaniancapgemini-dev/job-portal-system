@@ -25,6 +25,22 @@ def create_database():
             industry TEXT
         )
     """)
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS jobs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            employer_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            company_name TEXT NOT NULL,
+            location TEXT NOT NULL,
+            salary TEXT NOT NULL,
+            job_type TEXT NOT NULL,
+            description TEXT NOT NULL,
+            skills TEXT NOT NULL,
+            FOREIGN KEY (employer_id) REFERENCES employers(id)
+
+        )
+    """)
 
     connection.commit()
     connection.close()
