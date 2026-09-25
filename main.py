@@ -1,5 +1,7 @@
 from job_seeker.registration import register_job_seeker
 from job_seeker.login import login_job_seeker
+from employer.registration import register_employer
+from employer.login import login_employer
 
 
 def main_menu():
@@ -9,9 +11,10 @@ def main_menu():
         print("===================================")
         print("1. Job Seeker Registration")
         print("2. Job Seeker Login")
-        print("3. Employer")
-        print("4. Admin")
-        print("5. Exit")
+        print("3. Employer Registration")
+        print("4. Employer Login")
+        print("5. Admin")
+        print("6. Exit")
         print("===================================")
 
         choice = input("Enter your choice: ")
@@ -23,12 +26,15 @@ def main_menu():
             login_job_seeker()
 
         elif choice == "3":
-            print("\nEmployer section selected.")
+            register_employer()
 
         elif choice == "4":
-            print("\nAdmin section selected.")
+            login_employer()
 
         elif choice == "5":
+            print("\nAdmin section selected.")
+
+        elif choice == "6":
             print("\nThank you for using Job Portal System!")
             break
 
