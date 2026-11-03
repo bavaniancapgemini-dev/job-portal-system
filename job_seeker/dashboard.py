@@ -11,7 +11,8 @@ def job_seeker_dashboard(user):
         print("3. Search Jobs")
         print("4. Apply for Job")
         print("5. My Applications")
-        print("6. Logout")
+        print("6. View Job Details")
+        print("7. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
@@ -32,6 +33,9 @@ def job_seeker_dashboard(user):
             view_my_applications(user)
 
         elif choice == "6":
+            view_job_details(user)
+
+        elif choice == "7":
             print("\nLogged out successfully.")
             break
 
@@ -178,3 +182,64 @@ def update_profile(user):
     print("Name   :", new_name)
     print("Skills :", new_skills)
     print("-----------------------------------")
+    
+def view_job_details(user):
+
+    import sqlite3
+
+    connection = sqlite3.connect("job_portal.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT id, title, company_name, location,
+               salary, job_type, description, skills
+        FROM jobs
+    """)
+
+    jobs = cursor.fetchall()
+
+    if not jobs:
+        print("\nNo jobs available.")
+        connection.close()
+        return
+
+    print("\n========== AVAILABLE JOBS ==========")
+
+    for job in jobs:
+        print(f"\nJob ID: {job[0]}")
+        print(f"Title: {job[1]}")
+        print(f"Company: {job[2]}")
+        print(f"Location: {job[3]}")
+
+    try:
+        job_id = int(input("\nEnter Job ID to view details: "))
+    except ValueError:
+        print("Please enter a valid Job ID.")
+        connection.close()
+        return
+
+    cursor.execute("""
+        SELECT id, title, company_name, location,
+               salary, job_type, description, skills
+        FROM jobs
+        WHERE id = ?
+    """, (job_id,))
+
+    job = cursor.fetchone()
+
+    if job:
+        print("\n========== JOB DETAILS ==========")
+        print("Job ID:", job[0])
+        print("Title:", job[1])
+        print("Company:", job[2])
+        print("Location:", job[3])
+        print("Salary:", job[4])
+        print("Job Type:", job[5])
+        print("Description:", job[6])
+        print("Required Skills:", job[7])
+        print("=================================")
+
+    else:
+        print("\nInvalid Job ID.")
+
+    connection.close()
