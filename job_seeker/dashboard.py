@@ -5,6 +5,7 @@ from job_seeker.saved_jobs import (
     remove_saved_job
 )
 from job_seeker.application_reports import export_application_report
+from job_seeker.notifications import view_notifications
 
 
 
@@ -24,7 +25,8 @@ def job_seeker_dashboard(user):
         print("9. View Saved Jobs")
         print("10. Remove Saved Job")
         print("11. Export Application Report")
-        print("12. Logout")
+        print("12. View Notifications")
+        print("13. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
@@ -63,6 +65,9 @@ def job_seeker_dashboard(user):
             export_application_report(user)
             
         elif choice == "12":
+            view_notifications(user)
+
+        elif choice == "13":
             break
 
         else:
