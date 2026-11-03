@@ -1,3 +1,4 @@
+
 import sqlite3
 
 
@@ -11,16 +12,17 @@ def apply_for_job(user):
     connection = sqlite3.connect("job_portal.db")
     cursor = connection.cursor()
 
+    # Check whether the job exists and is open
     cursor.execute("""
         SELECT id, title, company_name, location
         FROM jobs
-        WHERE id = ?
+        WHERE id = ? AND is_open = 1
     """, (job_id,))
 
     job = cursor.fetchone()
 
     if not job:
-        print("\nJob not found.")
+        print("\nJob not found or this vacancy is closed.")
         connection.close()
         return
 
@@ -39,6 +41,7 @@ def apply_for_job(user):
         connection.close()
         return
 
+    # Check for duplicate applications
     cursor.execute("""
         SELECT id
         FROM applications
@@ -52,6 +55,7 @@ def apply_for_job(user):
         connection.close()
         return
 
+    # Submit application
     cursor.execute("""
         INSERT INTO applications
         (job_id, job_seeker_id, status)

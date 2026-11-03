@@ -83,7 +83,8 @@ def view_profile(user):
     print("Email   :", user[2])
     print("Skills  :", user[3])
     print("===================================")
-    
+
+
 def search_jobs():
     import sqlite3
 
@@ -102,7 +103,8 @@ def search_jobs():
         SELECT id, title, company_name, location,
                salary, job_type, skills
         FROM jobs
-        WHERE title LIKE ?
+        WHERE is_open = 1
+          AND title LIKE ?
           AND location LIKE ?
           AND job_type LIKE ?
     """
@@ -114,14 +116,13 @@ def search_jobs():
     ))
 
     jobs = cursor.fetchall()
-
     connection.close()
 
     if not jobs:
-        print("\nNo jobs found matching your search.")
+        print("\nNo open jobs found matching your search.")
         return
 
-    print("\nJobs Found:")
+    print("\nAvailable Jobs:")
     print("-----------------------------------")
 
     for job in jobs:
@@ -133,6 +134,7 @@ def search_jobs():
         print("Job Type  :", job[5])
         print("Skills    :", job[6])
         print("-----------------------------------")
+  
     
 def view_my_applications(user):
     import sqlite3
@@ -214,6 +216,7 @@ def update_profile(user):
     print("Skills :", new_skills)
     print("-----------------------------------")
     
+
 def view_job_details(user):
 
     import sqlite3
@@ -222,15 +225,15 @@ def view_job_details(user):
     cursor = connection.cursor()
 
     cursor.execute("""
-        SELECT id, title, company_name, location,
-               salary, job_type, description, skills
+        SELECT id, title, company_name, location
         FROM jobs
+        WHERE is_open = 1
     """)
 
     jobs = cursor.fetchall()
 
     if not jobs:
-        print("\nNo jobs available.")
+        print("\nNo open jobs available.")
         connection.close()
         return
 
@@ -253,7 +256,7 @@ def view_job_details(user):
         SELECT id, title, company_name, location,
                salary, job_type, description, skills
         FROM jobs
-        WHERE id = ?
+        WHERE id = ? AND is_open = 1
     """, (job_id,))
 
     job = cursor.fetchone()
@@ -271,9 +274,10 @@ def view_job_details(user):
         print("=================================")
 
     else:
-        print("\nInvalid Job ID.")
+        print("\nJob not found or this vacancy is closed.")
 
     connection.close()
+
     
 def withdraw_application(user):
 
