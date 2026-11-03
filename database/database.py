@@ -52,7 +52,29 @@ def create_database():
             FOREIGN KEY (job_seeker_id) REFERENCES job_seekers(id)
         )
     """)
-
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS saved_jobs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            job_seeker_id INTEGER NOT NULL,
+            job_id INTEGER NOT NULL,
+            FOREIGN KEY (job_seeker_id) REFERENCES job_seekers(id),
+            FOREIGN KEY (job_id) REFERENCES jobs(id),
+            UNIQUE(job_seeker_id, job_id)
+        )
+    """)
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS saved_jobs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            job_seeker_id INTEGER NOT NULL,
+            job_id INTEGER NOT NULL,
+            FOREIGN KEY (job_seeker_id) REFERENCES job_seekers(id),
+            FOREIGN KEY (job_id) REFERENCES jobs(id),
+            UNIQUE(job_seeker_id, job_id)
+        )
+    """)
+    
     connection.commit()
     connection.close()
 

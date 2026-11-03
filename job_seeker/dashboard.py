@@ -13,7 +13,9 @@ def job_seeker_dashboard(user):
         print("5. My Applications")
         print("6. View Job Details")
         print("7. Withdraw Job Application")
-        print("8. Logout")
+        print("8. Save Job to Favorites")
+        print("9. View Saved Jobs")
+        print("10. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
@@ -40,7 +42,13 @@ def job_seeker_dashboard(user):
             withdraw_application(user)
 
         elif choice == "8":
-            print("Logged out successfully.")
+            save_job(user)
+            
+        elif choice == "9":
+            view_saved_jobs(user)
+            
+        elif choice == "10":
+            print("Logging out...")
             break
 
         else:
@@ -315,5 +323,91 @@ def withdraw_application(user):
 
     else:
         print("\nInvalid Application ID.")
+
+    connection.close()
+    
+def save_job(user):
+
+    import sqlite3
+
+    connection = sqlite3.connect("job_portal.db")
+    cursor = connection.cursor()
+
+    job_seeker_id = user[0]
+
+    cursor.execute("""
+        SELECT id, title, company_name, location
+        FROM jobs
+    """)
+
+    jobs = cursor.fetchall()
+
+    if not jobs:
+        print("\nNo jobs available.")
+        connection.close()
+        return
+
+    print("\n========== AVAILABLE JOBS ==========")
+
+    for job in jobs:
+        print("\nJob ID:", job[0])
+        print("Title:", job[1])
+        print("Company:", job[2])
+        print("Location:", job[3])
+
+    try:
+        job_id = int(input("\nEnter Job ID to save: "))
+    except ValueError:
+        print("Invalid Job ID.")
+        connection.close()
+        return
+
+    cursor.execute("SELECT id FROM jobs WHERE id = ?", (job_id,))
+    job = cursor.fetchone()
+
+    if not job:
+        print("\nJob not found.")
+    else:
+        try:
+            cursor.execute("""
+                INSERT INTO saved_jobs (job_seeker_id, job_id)
+                VALUES (?, ?)
+            """, (job_seeker_id, job_id))
+
+            connection.commit()
+            print("\nJob saved to favorites successfully!")
+
+        except sqlite3.IntegrityError:
+            print("\nYou have already saved this job.")
+
+    connection.close()
+def view_saved_jobs(user):
+
+    import sqlite3
+
+    connection = sqlite3.connect("job_portal.db")
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT jobs.id, jobs.title, jobs.company_name,
+               jobs.location, jobs.salary
+        FROM saved_jobs
+        JOIN jobs ON saved_jobs.job_id = jobs.id
+        WHERE saved_jobs.job_seeker_id = ?
+    """, (user[0],))
+
+    saved_jobs = cursor.fetchall()
+
+    if saved_jobs:
+        print("\n========== YOUR FAVORITE JOBS ==========")
+
+        for job in saved_jobs:
+            print("\nJob ID:", job[0])
+            print("Title:", job[1])
+            print("Company:", job[2])
+            print("Location:", job[3])
+            print("Salary:", job[4])
+    else:
+        print("\nYou have not saved any jobs yet.")
 
     connection.close()
