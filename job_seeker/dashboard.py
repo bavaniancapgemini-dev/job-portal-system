@@ -12,7 +12,8 @@ def job_seeker_dashboard(user):
         print("4. Apply for Job")
         print("5. My Applications")
         print("6. View Job Details")
-        print("7. Logout")
+        print("7. Withdraw Job Application")
+        print("8. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
@@ -36,7 +37,10 @@ def job_seeker_dashboard(user):
             view_job_details(user)
 
         elif choice == "7":
-            print("\nLogged out successfully.")
+            withdraw_application(user)
+
+        elif choice == "8":
+            print("Logged out successfully.")
             break
 
         else:
@@ -241,5 +245,75 @@ def view_job_details(user):
 
     else:
         print("\nInvalid Job ID.")
+
+    connection.close()
+    
+def withdraw_application(user):
+
+    import sqlite3
+
+    connection = sqlite3.connect("job_portal.db")
+    cursor = connection.cursor()
+
+    job_seeker_id = user[0]
+
+    cursor.execute("""
+        SELECT applications.id, jobs.title,
+               jobs.company_name, applications.status
+        FROM applications
+        JOIN jobs ON applications.job_id = jobs.id
+        WHERE applications.job_seeker_id = ?
+    """, (job_seeker_id,))
+
+    applications = cursor.fetchall()
+
+    if not applications:
+        print("\nYou have not applied for any jobs.")
+        connection.close()
+        return
+
+    print("\n========== YOUR APPLICATIONS ==========")
+
+    for application in applications:
+        print("\nApplication ID:", application[0])
+        print("Job Title:", application[1])
+        print("Company:", application[2])
+        print("Status:", application[3])
+
+    try:
+        application_id = int(input("\nEnter Application ID to withdraw: "))
+    except ValueError:
+        print("Please enter a valid ID.")
+        connection.close()
+        return
+
+    cursor.execute("""
+        SELECT id, status
+        FROM applications
+        WHERE id = ? AND job_seeker_id = ?
+    """, (application_id, job_seeker_id))
+
+    application = cursor.fetchone()
+
+    if application:
+        if application[1] in ("Selected", "Rejected"):
+            print("\nYou cannot withdraw an application that is already Selected or Rejected.")
+        else:
+            confirm = input("Are you sure you want to withdraw? (yes/no): ").lower()
+
+            if confirm == "yes":
+                cursor.execute("""
+                    DELETE FROM applications
+                    WHERE id = ? AND job_seeker_id = ?
+                """, (application_id, job_seeker_id))
+
+                connection.commit()
+                print("\nApplication withdrawn successfully!")
+
+            else:
+                print("\nWithdrawal cancelled.")
+
+    else:
+        print("\nInvalid Application ID.")
 
     connection.close()
