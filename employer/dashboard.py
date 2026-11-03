@@ -1,5 +1,6 @@
 from employer.post_job import post_job
 from employer.analytics import employer_analytics
+from employer.reports import export_employer_report
 
 
 def employer_dashboard(employer):
@@ -14,7 +15,8 @@ def employer_dashboard(employer):
         print("5. View Applicants")
         print("6. Update Application Status")
         print("7. Employer Analytics")
-        print("8. Logout")
+        print("8. Export Applicant Report")
+        print("9. Logout")
         print("===================================")
 
         choice = input("Enter your choice: ")
@@ -41,6 +43,9 @@ def employer_dashboard(employer):
             employer_analytics(employer)
 
         elif choice == "8":
+            export_employer_report(employer)
+
+        elif choice == "9":
             print("\nLogged out successfully.")
             break
 
