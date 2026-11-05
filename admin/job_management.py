@@ -103,4 +103,3 @@ def delete_job_as_admin():
         print("\nDeletion cancelled.")
 
     connection.close()
-
