@@ -30,8 +30,19 @@ from admin.backup import (
     view_database_backups
 )
 
+from admin.activity_logs import (
+    log_admin_activity,
+    view_admin_activity_logs
+)
+
 
 def admin_dashboard(admin):
+
+    log_admin_activity(
+        admin[1],
+        "Admin Login",
+        "Administrator logged into the system."
+    )
 
     while True:
 
@@ -67,8 +78,11 @@ def admin_dashboard(admin):
         print("\nDATABASE MANAGEMENT")
         print("14. Create Database Backup")
         print("15. View Database Backups")
+        
+        print("\nSECURITY & MONITORING")
+        print("16. View Admin Activity Logs")
 
-        print("\n16. Logout")
+        print("\n17. Logout")
 
         choice = input("\nEnter your choice: ").strip()
 
@@ -82,13 +96,13 @@ def admin_dashboard(admin):
             search_users()
 
         elif choice == "4":
-            delete_user_account()
+            delete_user_account(admin[1])
 
         elif choice == "5":
             view_all_jobs()
 
         elif choice == "6":
-            delete_job_as_admin()
+            delete_job_as_admin(admin[1])
 
         elif choice == "7":
             view_all_applications()
@@ -100,24 +114,27 @@ def admin_dashboard(admin):
             view_platform_statistics()
 
         elif choice == "10":
-            export_job_seekers()
+            export_job_seekers(admin[1])
 
         elif choice == "11":
-            export_employers()
+            export_employers(admin[1])
 
         elif choice == "12":
-            export_jobs()
+            export_jobs(admin[1])
 
         elif choice == "13":
-            export_applications()
+            export_applications(admin[1])
 
         elif choice == "14":
-            backup_database()
+            backup_database(admin[1])
 
         elif choice == "15":
             view_database_backups()
 
         elif choice == "16":
+            view_admin_activity_logs()
+
+        elif choice == "17":
             print("\nAdmin logged out successfully!")
             break
 

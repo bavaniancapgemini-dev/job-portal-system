@@ -2,6 +2,8 @@
 import sqlite3
 from getpass import getpass
 
+from admin.security import hash_password
+
 
 def create_admin():
 
@@ -23,14 +25,17 @@ def create_admin():
         print("\nPasswords do not match.")
         return
 
+    password_hash = hash_password(password)
+
     connection = sqlite3.connect("job_portal.db")
     cursor = connection.cursor()
 
     try:
+
         cursor.execute("""
             INSERT INTO admins (name, email, password)
             VALUES (?, ?, ?)
-        """, (name, email, password))
+        """, (name, email, password_hash))
 
         connection.commit()
 

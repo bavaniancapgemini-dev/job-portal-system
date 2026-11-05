@@ -1,5 +1,6 @@
 
 import sqlite3
+from admin.activity_logs import log_admin_activity
 
 
 def view_all_job_seekers():
@@ -120,7 +121,7 @@ def search_users():
     print("-----------------------------------")
 
 
-def delete_user_account():
+def delete_user_account(admin_name):
 
     print("\n========== DELETE USER ACCOUNT ==========")
     print("1. Delete Job Seeker")
@@ -235,6 +236,21 @@ def delete_user_account():
             )
 
         connection.commit()
+        
+        if choice == "1":
+            action = "Job Seeker Account Deleted"
+            details = f"Deleted Job Seeker ID: {user_id}"
+
+        else:
+            action = "Employer Account Deleted"
+            details = f"Deleted Employer ID: {user_id}"
+
+        log_admin_activity(
+            admin_name,
+            action,
+            details
+        )
+        
         print("\nAccount deleted successfully!")
 
     except sqlite3.Error as error:

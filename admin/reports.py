@@ -3,9 +3,16 @@ import sqlite3
 import csv
 import os
 from datetime import datetime
+from admin.activity_logs import log_admin_activity
 
 
-def export_job_seekers():
+def export_job_seekers(admin_name):
+    
+    log_admin_activity(
+        admin_name,
+        "Report Exported",
+        "Exported Job Seeker Report"
+    )
 
     connection = sqlite3.connect("job_portal.db")
     cursor = connection.cursor()
@@ -36,7 +43,13 @@ def export_job_seekers():
     print("File:", filename)
 
 
-def export_employers():
+def export_employers(admin_name):
+
+    log_admin_activity(
+        admin_name,
+        "Report Exported",
+        "Exported Employer Report"
+    )
 
     connection = sqlite3.connect("job_portal.db")
     cursor = connection.cursor()
@@ -67,7 +80,13 @@ def export_employers():
     print("File:", filename)
 
 
-def export_jobs():
+def export_jobs(admin_name):
+    
+    log_admin_activity(
+        admin_name,
+        "Report Exported",
+        "Exported Job Report"
+    )
 
     connection = sqlite3.connect("job_portal.db")
     cursor = connection.cursor()
@@ -108,7 +127,13 @@ def export_jobs():
     print("File:", filename)
 
 
-def export_applications():
+def export_applications(admin_name):
+
+    log_admin_activity(
+        admin_name,
+        "Report Exported",
+        "Exported Application Report"
+    )
 
     connection = sqlite3.connect("job_portal.db")
     cursor = connection.cursor()

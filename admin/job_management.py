@@ -1,5 +1,6 @@
 
 import sqlite3
+from admin.activity_logs import log_admin_activity
 
 
 def view_all_jobs():
@@ -41,7 +42,7 @@ def view_all_jobs():
         print("-----------------------------------")
 
 
-def delete_job_as_admin():
+def delete_job_as_admin(admin_name):
 
     print("\n========== DELETE JOB POSTING ==========")
 
@@ -96,6 +97,12 @@ def delete_job_as_admin():
         """, (job_id,))
 
         connection.commit()
+        
+        log_admin_activity(
+            admin_name,
+            "Job Deleted",
+            f"Deleted Job ID {job_id}: {job[1]} at {job[2]}"
+        )
 
         print("\nJob posting deleted successfully!")
 

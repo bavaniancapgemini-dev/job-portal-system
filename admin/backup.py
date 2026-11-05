@@ -2,9 +2,10 @@
 import sqlite3
 import os
 from datetime import datetime
+from admin.activity_logs import log_admin_activity
 
 
-def backup_database():
+def backup_database(admin_name):
 
     source_database = "job_portal.db"
 
@@ -39,6 +40,11 @@ def backup_database():
         print("       DATABASE BACKUP SUCCESSFUL")
         print("===================================")
         print("Backup saved at:", backup_path)
+        log_admin_activity(
+            admin_name,
+            "Database Backup",
+            "Created database backup: " + backup_filename
+        )
 
     except sqlite3.Error as error:
 
